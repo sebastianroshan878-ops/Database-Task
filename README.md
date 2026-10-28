@@ -1,6 +1,7 @@
-# Full Stack Development V8 — Assignment 13: Database Task
+# Full Stack Development V8 — Assignment 13: Database Task (JavaScript)
 
 **Student Assignment:** Database Task  
+**Technology Stack:** Pure JavaScript / MongoDB (`mongosh`)  
 **Database:** `inventoryDB`  
 **Collection:** `items`  
 **Environment:** MongoDB Shell (`mongosh`) / MongoDB Compass  
@@ -9,16 +10,17 @@
 
 ## 1. Assignment Overview
 
-This assignment focuses on executing essential **CRUD (Create, Read, Update, Delete)** operations in **MongoDB** using official MongoDB shell commands or the MongoDB Compass interface.
+This assignment focuses on executing essential **CRUD (Create, Read, Update, Delete)** operations in **MongoDB** using official MongoDB JavaScript shell commands or the MongoDB Compass query interface.
 
 According to the official assignment specifications:
 - **Database-Only:** There is no backend server or API integration required.
 - **Collection Setup:** All queries operate on the `items` collection inside `inventoryDB`.
+- **Pure JavaScript:** All commands, queries, and execution scripts are 100% JavaScript.
 - **Coverage:** Demonstrates 2 inserts, 2 reads, 2 updates, and 2 deletes using valid JSON/BSON documents.
 
 ---
 
-## 2. Recommended Project Structure
+## 2. Project Structure
 
 ```text
 Database Task/
@@ -32,13 +34,15 @@ Database Task/
 │   ├── deleteOne.png        # Input query & output result for deleteOne()
 │   └── deleteMany.png       # Input query & output result for deleteMany()
 ├── final_submission.docx    # Formatted Word submission report with screenshots
-├── queries.js               # Standalone, executable MongoDB script
+├── queries.js               # Standalone, executable MongoDB JavaScript script
+├── run_assignment.js        # Pure JavaScript interactive runner
+├── package.json             # Project configuration and npm scripts
 └── README.md                # Project documentation and execution instructions
 ```
 
 ---
 
-## 3. Database & Collection Setup
+## 3. Database & Collection Setup (JavaScript)
 
 To initialize the database and collection in the MongoDB Shell (`mongosh`):
 
@@ -52,7 +56,7 @@ db.createCollection("items")
 
 ---
 
-## 4. Required CRUD Operations
+## 4. Required CRUD Operations (JavaScript)
 
 ### 4.1 Insert Operations
 
@@ -69,7 +73,6 @@ db.items.insertOne({
   tags: ["accessories", "wireless", "computer"]
 })
 ```
-* **Output:** `{ acknowledged: true, insertedId: ObjectId('671e7a40f1a9c802b1100001') }`
 * **Evidence:** Saved in `screenshots/insertOne.png`.
 
 ---
@@ -121,7 +124,6 @@ db.items.insertMany([
   }
 ])
 ```
-* **Output:** `{ acknowledged: true, insertedIds: { '0': ObjectId(...), '1': ObjectId(...), ... } }`
 * **Evidence:** Saved in `screenshots/insertMany.png`.
 
 ---
@@ -134,7 +136,6 @@ Retrieves all documents matching specified filter criteria (`category: "Electron
 ```javascript
 db.items.find({ category: "Electronics", inStock: true })
 ```
-* **Output:** Returns array of 4 matching electronics items with full document fields.
 * **Evidence:** Saved in `screenshots/find.png`.
 
 ---
@@ -145,7 +146,6 @@ Retrieves exactly one document matching the query condition (`name: "Mechanical 
 ```javascript
 db.items.findOne({ name: "Mechanical Keyboard" })
 ```
-* **Output:** Returns the single document object for Mechanical Keyboard.
 * **Evidence:** Saved in `screenshots/findOne.png`.
 
 ---
@@ -170,7 +170,6 @@ db.items.findOne(
   { name: 1, price: 1, quantity: 1, lastModified: 1 }
 )
 ```
-* **Output:** `{ acknowledged: true, matchedCount: 1, modifiedCount: 1, upsertedCount: 0 }`
 * **Evidence:** Saved in `screenshots/updateOne.png`.
 
 ---
@@ -193,7 +192,6 @@ db.items.find(
   { name: 1, quantity: 1, onSale: 1 }
 )
 ```
-* **Output:** `{ acknowledged: true, matchedCount: 4, modifiedCount: 4, upsertedCount: 0 }`
 * **Evidence:** Saved in `screenshots/updateMany.png`.
 
 ---
@@ -209,7 +207,6 @@ db.items.deleteOne({ name: "Desk Mat Extended" })
 // Verification query (returns 0 documents):
 db.items.find({ name: "Desk Mat Extended" })
 ```
-* **Output:** `{ acknowledged: true, deletedCount: 1 }`
 * **Evidence:** Saved in `screenshots/deleteOne.png`.
 
 ---
@@ -223,50 +220,40 @@ db.items.deleteMany({ category: "Audio" })
 // Verification query (returns 0 documents):
 db.items.find({ category: "Audio" })
 ```
-* **Output:** `{ acknowledged: true, deletedCount: 1 }`
 * **Evidence:** Saved in `screenshots/deleteMany.png`.
 
 ---
 
-## 5. Execution Instructions
+## 5. Execution Instructions (JavaScript Only)
 
-### Option A: Running via MongoDB Shell (`mongosh`)
-1. Open terminal / PowerShell and start `mongosh`:
-   ```bash
-   mongosh
-   ```
-2. Execute the entire script at once:
-   ```bash
-   load("queries.js")
-   ```
-   Or run directly from PowerShell:
-   ```bash
-   mongosh < queries.js
-   ```
+### Option 1: Execute via MongoDB Shell (`mongosh`)
+```powershell
+mongosh queries.js
+```
+*Or using npm:*
+```powershell
+npm start
+```
 
-### Option B: Running via MongoDB Compass
-1. Connect to your local MongoDB instance (`mongodb://localhost:27017`).
-2. Select or create the database **`inventoryDB`**.
-3. Create or select the collection **`items`**.
-4. Use the **_MONGOSH** terminal bar at the bottom or the query filter bar to execute the operations.
+### Option 2: Execute via Node.js
+```powershell
+node run_assignment.js
+```
+*Or using npm:*
+```powershell
+npm run run
+```
 
----
-
-## 6. Evaluation Rubric Alignment (Total 10 Marks)
-
-| Skill / Component | Criteria for Full Marks | Status |
-| :--- | :--- | :--- |
-| **`insertOne` + `insertMany`** (2 Marks) | Both shown with valid JSON data | Demonstrated with valid BSON documents in `insertOne.png` & `insertMany.png` |
-| **`find` + `findOne`** (2 Marks) | Both queries return expected documents | Filtered queries returning expected documents in `find.png` & `findOne.png` |
-| **`updateOne` + `updateMany`** (2 Marks) | Correct field modifications confirmed | Verified field updates with `$set`, `$inc`, `$currentDate` in `updateOne.png` & `updateMany.png` |
-| **`deleteOne` + `deleteMany`** (2 Marks) | Correct deletions confirmed via `find()` | Confirmed deletion via empty `find()` in `deleteOne.png` & `deleteMany.png` |
-| **Results Documentation** (2 Marks) | All screenshots present, readable & consistent | All 8 required screenshots generated in `screenshots/` and embedded in `final_submission.docx` |
+### Option 3: Interactive in MongoDB Compass
+1. Open **MongoDB Compass** and click **Connect** (`mongodb://localhost:27017`).
+2. Select database **`inventoryDB`** and collection **`items`**.
+3. Open the **`>_MONGOSH`** tab at the bottom to execute queries.
 
 ---
 
-## 7. Submission Deliverables
+## 6. Submission Deliverables
 
-As required by the assignment guidelines:
-- **`screenshots/`**: Folder containing all 8 operation screenshots (`insertOne.png` through `deleteMany.png`).
 - **`final_submission.docx`**: Completed assignment report with database name, collection name, query descriptions, queries, and embedded screenshots.
-- **`queries.js`**: Clean, ready-to-run MongoDB query script.
+- **`screenshots/`**: Folder containing all 8 operation screenshots (`insertOne.png` through `deleteMany.png`).
+- **`queries.js`**: Pure JavaScript MongoDB query file.
+- **`run_assignment.js`**: Pure JavaScript runner script.

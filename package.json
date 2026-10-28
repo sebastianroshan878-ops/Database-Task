@@ -1,0 +1,19 @@
+{
+  "name": "mongo-database-task",
+  "version": "1.0.0",
+  "description": "Full Stack Development V8 Assignment 13 - Database Task",
+  "main": "queries.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "mongosh queries.js",
+    "run": "node run_assignment.js"
+  },
+  "keywords": [
+    "mongodb",
+    "crud",
+    "mongosh",
+    "database-task"
+  ],
+  "author": "Student",
+  "license": "ISC"
+}
