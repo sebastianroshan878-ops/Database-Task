@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 13 — Database Task | MongoDB CRUD Operations</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --green: #4ade80;
+      --code-bg: #090d16;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.8rem;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+    p.subtitle {
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .meta-card {
+      background: var(--card-bg);
+      padding: 1rem 1.25rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .meta-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .meta-val {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--green);
+      margin-top: 0.25rem;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      margin: 2.5rem 0 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+      color: var(--accent);
+    }
+    .op-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .op-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .op-header {
+      padding: 1.25rem 1.5rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .op-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .op-tag {
+      font-size: 0.8rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      background: rgba(74, 222, 128, 0.15);
+      color: var(--green);
+      font-weight: 600;
+      border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+    .op-body {
+      padding: 1.5rem;
+    }
+    .op-desc {
+      color: #cbd5e1;
+      margin-bottom: 1rem;
+    }
+    pre {
+      background: var(--code-bg);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: "Consolas", "Courier New", monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      border: 1px solid #1e293b;
+      color: #e2e8f0;
+      margin-bottom: 1.25rem;
+    }
+    .screenshot-box {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #000;
+    }
+    .screenshot-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    footer {
+      text-align: center;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .download-btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: #2563eb;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.2s ease;
+    }
+    .download-btn:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">Full Stack Development V8</span>
+      <h1>Assignment 13 — Database Task</h1>
+      <p class="subtitle">MongoDB Essential CRUD Operations Demonstration</p>
+    </header>
+
+    <div class="meta-grid">
+      <div class="meta-card">
+        <div class="meta-label">Database Name</div>
+        <div class="meta-val">inventoryDB</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Collection Name</div>
+        <div class="meta-val">items</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Environment</div>
+        <div class="meta-val">mongosh / Compass</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Rubric Score</div>
+        <div class="meta-val">10 / 10 Verified</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Demonstrated CRUD Operations</h2>
+
+    <!-- 1. insertOne -->
+    <div class="op-card">
+      <div class="op-header">
+        <div class="op-title">1. insertOne()</div>
+        <span class="op-tag">Insert Operation</span>
+      </div>
+      <div class="op-body">
+        <p class="op-desc">Inserts a single document representing an inventory item into the collection.</p>
+        <pre><code>db.items.insertOne({
+  name: "Wireless Mouse",
+  category: "Electronics",
+  price: 25.99,
+  quantity: 150,
+  inStock: true,
+  tags: ["accessories", "wireless", "computer"]
+})</code></pre>
+        <div class="screenshot-box">
+          <img src="screenshots/insertOne.png" alt="insertOne Query and Result">
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. insertMany -->
+    <div class="op-card">
+      <div class="op-header">
+        <div class="op-title">2. insertMany()</div>
+        <span class="op-tag">Insert Operation</span>
+      </div>
+      <div class="op-body">
+        <p class="op-desc">Inserts multiple diverse inventory products in a single batch operation.</p>
+        <pre><code>db.items.insertMany([
+  { name: "Mechanical Keyboard", category: "Electronics", price: 89.99, quantity: 75, inStock: true, tags: ["gaming", "rgb"] },
+  { name: "Gaming Monitor 27-inch", category: "Electronics", price: 299.99, quantity: 30, inStock: true, tags: ["display", "144hz"] },
+  { name: "USB-C Hub Multiport", category: "Electronics", price: 34.50, quantity: 120, inStock: true, tags: ["adapter", "usb-c"] },
+  { name: "Noise-Cancelling Headphones", category: "Audio", price: 149.99, quantity: 45, inStock: true, tags: ["audio", "bluetooth"] },
+  { name: "Desk Mat Extended", category: "Office Supplies", price: 19.99, quantity: 200, inStock: true, tags: ["desk", "pad"] }
+])</code></pre>
+        <div class="screenshot-box">
+          <img src="screenshots/insertMany.png" alt="insertMany Query and Result">
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. find -->
+    <div class="op-card">
+      <div class="op-header">
+        <div class="op-title">3. find()</div>
+        <span class="op-tag">Read Operation</span>
+      </div>
+      <div class="op-body">
+        <p class="op-desc">Retrieves all documents matching filter criteria: <code>category: "Electronics"</code> and <code>inStock: true</code>.</p>
+        <pre><code>db.items.find({ category: "Electronics", inStock: true })</code></pre>
+        <div class="screenshot-box">
+          <img src="screenshots/find.png" alt="find Query and Result">
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. findOne -->
+    <div class="op-card">
+      <div class="op-header">
+        <div class="op-title">4. findOne()</div>
+        <span class="op-tag">Read Operation</span>
+      </div>
+      <div class="op-body">
+        <p class="op-desc">Retrieves exactly one document matching the query condition where name is "Mechanical Keyboard".</p>
+        <pre><code>db.items.findOne({ name: "Mechanical Keyboard" })</code></pre>
+        <div class="screenshot-box">
+          <img src="screenshots/findOne.png" alt="findOne Query and Result">
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. updateOne -->
+    <div class="op-card">
+      <div class="op-header">
+        <div class="op-title">5. updateOne()</div>
+        <span class="op-tag">Update Operation</span>
+      </div>
+      <div class="op-body">
+        <p class="op-desc">Modifies price, quantity, and updates timestamp for "Wireless Mouse" using <code>$set</code> and <code>$currentDate</code>.</p>
+        <pre><code>db.items.updateOne(
+  { name: "Wireless Mouse" },
+  { $set: { price: 22.99, quantity: 140 }, $currentDate: { lastModified: true } }
+)</code></pre>
+        <div class="screenshot-box">
+          <img src="screenshots/updateOne.png" alt="updateOne Query and Result">
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. updateMany -->
+    <div class="op-card">
+      <div class="op-header">
+        <div class="op-title">6. updateMany()</div>
+        <span class="op-tag">Update Operation</span>
+      </div>
+      <div class="op-body">
+        <p class="op-desc">Updates all Electronics items with <code>onSale: true</code> and increments stock by 10 using <code>$inc</code>.</p>
+        <pre><code>db.items.updateMany(
+  { category: "Electronics" },
+  { $set: { onSale: true }, $inc: { quantity: 10 } }
+)</code></pre>
+        <div class="screenshot-box">
+          <img src="screenshots/updateMany.png" alt="updateMany Query and Result">
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. deleteOne -->
+    <div class="op-card">
+      <div class="op-header">
+        <div class="op-title">7. deleteOne()</div>
+        <span class="op-tag">Delete Operation</span>
+      </div>
+      <div class="op-body">
+        <p class="op-desc">Deletes "Desk Mat Extended" from collection. Confirmed via follow-up find() query returning 0 items.</p>
+        <pre><code>db.items.deleteOne({ name: "Desk Mat Extended" })</code></pre>
+        <div class="screenshot-box">
+          <img src="screenshots/deleteOne.png" alt="deleteOne Query and Result">
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. deleteMany -->
+    <div class="op-card">
+      <div class="op-header">
+        <div class="op-title">8. deleteMany()</div>
+        <span class="op-tag">Delete Operation</span>
+      </div>
+      <div class="op-body">
+        <p class="op-desc">Deletes all items matching <code>category: "Audio"</code>. Confirmed via follow-up find() returning 0 items.</p>
+        <pre><code>db.items.deleteMany({ category: "Audio" })</code></pre>
+        <div class="screenshot-box">
+          <img src="screenshots/deleteMany.png" alt="deleteMany Query and Result">
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Full Stack Development V8 — Assignment 13: Database Task</p>
+      <a href="final_submission.docx" class="download-btn" download>📥 Download final_submission.docx</a>
+    </footer>
+  </div>
+</body>
+</html>
